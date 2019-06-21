@@ -10,10 +10,10 @@ npm install
 When the installation is completed, check that your project folder now contains a subfolder called node_modules, and that that folder contains at least those packages.
 
 You may also need the following:
-npm install --save express
-npm install --save request
-npm install --save cors
-npm install --save cookie-parser
+npm install --save express  
+npm install --save request  
+npm install --save cors  
+npm install --save cookie-parser  
 
 In order to run the webpage, open the Terminal.
 Navigate to your folder with the app.html file (e.g. cd cd /spotify/get-user-info)
