@@ -170,39 +170,6 @@ app.get('/get_info', function(req, res) {
 
   console.log(">>>>> Entering /get_info function...");
 
-/**  This is what the returned JSON looks like
-{"items":[
-	{
-		"track":{
-			"artists":[
-				{
-				"external_urls": {"spotify":"https://open.spotify.com/artist/5INjqkS1o8h1imAzPqGZBb"},
-				"href":"https://api.spotify.com/v1/artists/5INjqkS1o8h1imAzPqGZBb","id":"5INjqkS1o8h1imAzPqGZBb",
-				"name":"Tame Impala","type":"artist","uri":"spotify:artist:5INjqkS1o8h1imAzPqGZBb"
-				}
-			],	
-			"available_markets":["CA","MX","US"],
-			"disc_number":1,
-			"duration_ms":108546,
-			"explicit":false,
-			"external_urls":{"spotify":"https://open.spotify.com/track/2gNfxysfBRfl9Lvi9T3v6R"},
-			"href":"https://api.spotify.com/v1/tracks/2gNfxysfBRfl9Lvi9T3v6R","id":"2gNfxysfBRfl9Lvi9T3v6R",
-			"name":"Disciples",
-			"preview_url":"https://p.scdn.co/mp3-preview/6023e5aac2123d098ce490488966b28838b14fa2",
-			"track_number":9,
-			"type":"track",
-			"uri":"spotify:track:2gNfxysfBRfl9Lvi9T3v6R"
-		},
-		"played_at":"2016-12-13T20:44:04.589Z",
-		"context":{
-			"uri":"spotify:artist:5INjqkS1o8h1imAzPqGZBb",
-			"external_urls":{"spotify":"https://open.spotify.com/artist/5INjqkS1o8h1imAzPqGZBb"},
-		"href":"https://api.spotify.com/v1/artists/5INjqkS1o8h1imAzPqGZBb",
-		"type":"artist"
-		}
-	}
-]
-**/
 
 //   var info_played = {
 //     headers: { 'Authorization': 'Bearer ' + token },
