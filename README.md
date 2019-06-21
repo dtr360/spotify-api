@@ -1,9 +1,11 @@
 # spotify-api
 Access user information from Spotify using node.js, bootstrap, handlebars and ajax.
 
-Set up Node.js using the steps outlined in the Spotify Web API Tutorial: https://developer.spotify.com/documentation/web-api/quick-start/
-This tutorial will go through the steps of setting up your application/settings on Spotify.
-You will need to install Node.js.
+Set up Node.js using the steps outlined in the Spotify Web API Tutorial: https://developer.spotify.com/documentation/web-api/quick-start/  
+This tutorial will go through the steps of setting up your application and settings on Spotify.
+
+You will need to install Node.js. Enter **node -v** in the Terminal to verify that Node.js is installed correctly and to see the version of Node.js that was installed. If you do have Node.js installed, it will output the version.
+Update to the latest version using ```npm i -g npm```.
 
 You will also need npm. Install in the terminal via:
 ```
