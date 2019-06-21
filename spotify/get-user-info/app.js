@@ -165,34 +165,5 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-
-app.get('/get_info', function(req, res) {
-
-  console.log(">>>>> Entering /get_info function...");
-
-
-//   var info_played = {
-//     headers: { 'Authorization': 'Bearer ' + token },
-//     uri: 'https://api.spotify.com/v1/me/player/recently-played',
-//     json: true
-//   };
-
-//   request.get(info_played, function(error, response, body) {
-//     console.log("Status Code: " + response.statusCode);
-
-//     if (!error && response.statusCode === 200) {
-//       var played_list = '<p><h2>Your most recently played songs</h2></p>';
-//       for (i = 0; i < body.items.length; i++) {
-//         console.log(body['items'][i]['track']['name']);
-//         played_list += body.items[i]['track']['name'] + '<br>';
-//       }
-//       res.send(played_list);
-
-//     }
-//   });
-});
-
-
-
 console.log('Listening on 8888');
 app.listen(8888);
