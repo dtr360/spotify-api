@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+  <head>
+
+    <title>Using an Authorization Code flow with Spotify</title>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style type="text/css">
+      #login, #loggedin {
+        display: none;
+      }
+      .text-overflow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 400px;
+      }
+      .dl-horizontal dd {
+        margin-left: 180px;
+      }
+    </style>
+  </head>
+
+  <body>
+
+      <div id="login">
+        <h1>This is an example of the Authorization Code flow</h1>
+        <a href="/login" class="btn btn-primary">Log in with Spotify</a>
+      </div>
+
+      <div id="loggedin">
+        <div id="user-profile">
+        </div>
+        <div id="oauth">
+        </div>
+        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+      </div>
+
+      <h2>User Information</h2>
+      <!-- <div id="get-info" style="padding:0 15px;">
+        <a href="/get_info" class="btn btn-info btn-block">Get Tracks Using JS</a>
+        <div id="results_info">
+        </div>
+      </div> -->
+
+      <div id="track-info">
+        <div class="panel-body">
+          <button class="btn btn-info btn-block" data-toggle="collapse" data-target="#track_results">Get Most Recently Played Tracks</button>
+          <div id="track_results" class="collapse">
+          </div>
+        </div>
+      </div>
+
+      <div id="followed-info">
+        <div class="panel-body">
+          <button class="btn btn-info btn-block" data-toggle="collapse" data-target="#followed_results">Get Followed Artists</button>
+          <div id="followed_results" class="collapse">
+          </div>
+        </div>
+      </div>
+ 
+    <script id="user-profile-template" type="text/x-handlebars-template">
+      <h1>Logged in as {{display_name}}</h1>
+      <div class="media">
+        <div class="pull-left">
+          <img class="media-object" width="150" src="{{images.0.url}}" />
+        </div>
+        <div class="media-body">
+          <dl class="dl-horizontal">
+            <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
+            <dt>Id</dt><dd>{{id}}</dd>
+            <dt>Email</dt><dd>{{email}}</dd>
+            <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
+            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
+            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
+            <dt>Country</dt><dd>{{country}}</dd>
+          </dl>
+        </div>
+      </div>
+    </script>
+
+    <script id="oauth-template" type="text/x-handlebars-template">
+      <h2>oAuth info</h2>
+      <dl class="dl-horizontal">
+        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
+        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
+      </dl>
+    </script>
+
+    <script id="tracks-template" type="text/x-handlebars-template">
+      <h3>Most Recently Played Tracks</h3>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          {{#each items}}
+            <div class="media">
+              <div class="media-body">
+                <dl class="dl-horizontal">
+                  <dt>Track Name</dt><dd class="clearfix">{{track.name}}</dd>
+                  <dt>Artist</dt><dd>{{track.artists.[0].name}}</dd>
+                  <dt>Played at</dt><dd>{{played_at}}</dd>
+                </dl>
+              </div>    
+            </div>   
+          {{/each}}
+        </div>
+      </div>
+    </script>
+
+    <script id="followed-template" type="text/x-handlebars-template">
+      <h3>Followed Artists</h3>
+      <div class="panel panel-default">
+        <div class="panel-body"
+          {{#each artists.items}}
+            <div class="media">
+              <div class="pull-left">
+                <img class="media-object" width="150" src="{{images.0.url}}" />
+              </div>
+              <div class="media-body">
+                <dl class="dl-horizontal"">
+                  <dt>Artists Name</dt><dd class="clearfix">{{name}}</dd>
+                  <dt>Genre</dt><dd class="clearfix">{{genres}}</dd>
+                  <dt>Popularity</dt><dd class="clearfix">{{popularity}}</dd>
+                </dl>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+    <script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+      (function() {
+        /**
+         * Obtains parameters from the hash of the URL
+         * @return Object
+         * This is a self-invoking expression that is started automatically, without being called.
+         * Function expressions will execute automatically if the expression is followed by ().
+         */
+        function getHashParams() {
+          var hashParams = {};
+          // Get the anchor part of the URL (using window.location.hash) Then
+          // get the substring starting from character 1 onwards (0-indexed). This just 
+          // removes the # from the string. the 'g' means global search, meaning regex search
+          // should be for a pattern throughout the string, creating an array of all occurrences.
+          var e;
+          // The regex below: 
+          // ([^&;=]+) means take any group of characters that does not contain a &, or =. The ^ means not.
+          // The + means take 1 or more occurances.
+          // ([^&;]*) means take any group of characters that does not contain a &, or =. The ^ means not. 
+          // The * means take 0 or more occurances.  
+          // The g (for global search) means find all occurances in the text.
+          var r = /([^&;=]+)=?([^&;]*)/g, 
+              q = window.location.hash.substring(1); // get anchor part of URL and skip initial # character
+          
+          //alert("q: " + q);
+          while (e = r.exec(q)) {  // exec is a regular expression function that finds a match
+            // e is an array containing access and refresh token info
+            // alert("e0-2: " + e[0] + "\n" + e[1] + "\n"+ e[2] + "\n");
+             hashParams[e[1]] = decodeURIComponent(e[2]);  // This adds an entry to a dictionary. For
+                // example, the above line adds the key, 'access_token' from e[1] and the token itself
+                // from e[2].
+          }
+          return hashParams;
+        }
+
+        var userProfileSource = document.getElementById('user-profile-template').innerHTML,
+            userProfileTemplate = Handlebars.compile(userProfileSource),
+            userProfilePlaceholder = document.getElementById('user-profile');
+
+        var oauthSource = document.getElementById('oauth-template').innerHTML,
+            oauthTemplate = Handlebars.compile(oauthSource),
+            oauthPlaceholder = document.getElementById('oauth');
+
+        var tracksSource = document.getElementById('tracks-template').innerHTML,
+            tracksTemplate = Handlebars.compile(tracksSource),
+            tracksPlaceholder = document.getElementById('track_results');
+
+         var followedSource = document.getElementById('followed-template').innerHTML,
+             followedTemplate = Handlebars.compile(followedSource),
+             followedPlaceholder = document.getElementById('followed_results');
+
+        var params = getHashParams();
+
+        var access_token = params.access_token,
+            refresh_token = params.refresh_token,
+            error = params.error;
+
+        if (error) {
+          alert('There was an error during the authentication');
+
+        } else {
+
+          if (access_token) {
+            // render oauth info
+            oauthPlaceholder.innerHTML = oauthTemplate({
+              access_token: access_token,
+              refresh_token: refresh_token
+            });
+
+            $.ajax({
+                url: 'https://api.spotify.com/v1/me',
+                headers: {
+                  'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+
+                  $('#login').hide();
+                  $('#loggedin').show();
+                }
+            });
+          } else {
+              // render initial screen
+              $('#login').show();
+              $('#loggedin').hide();
+          }
+
+          document.getElementById('obtain-new-token').addEventListener('click', function() {
+            $.ajax({
+              url: '/refresh_token',
+              data: {
+                'refresh_token': refresh_token
+              }
+            }).done(function(data) { // return the new access_token in the data object
+              access_token = data.access_token;
+              oauthPlaceholder.innerHTML = oauthTemplate({
+                access_token: access_token,
+                refresh_token: refresh_token
+              });
+            });
+          }, false);
+
+
+          // document.getElementById('get-info').addEventListener('click', function() {
+          //   $.ajax({
+          //       url: '/get_info'
+          //   });
+          // }, false);
+
+
+          document.getElementById('track-info').addEventListener('click', function() {  
+            if ($('#track_results').is('.collapse:not(.show)')) { // only update tracks data if panel is shown
+              var limit = 10;
+              $.ajax({
+                  url: 'https://api.spotify.com/v1/me/player/recently-played?limit=' + limit,
+                  headers: { 'Authorization': 'Bearer ' + access_token
+                  },
+                  success: function(response) {
+                    tracksPlaceholder.innerHTML = tracksTemplate(response);
+                  },
+                  error: function (textStatus, errorThrown) {
+                    alert(textStatus.responseText);
+                  }
+              });
+            }
+          }, false);
+
+
+          document.getElementById('followed-info').addEventListener('click', function() { 
+            if ($('#followed_results').is('.collapse:not(.show)')) { // only update tracks data if panel is shown
+              $.ajax({
+                  url: 'https://api.spotify.com/v1/me/following?type=artist',
+                  headers: { 'Authorization': 'Bearer ' + access_token
+                  },
+                  success: function(response) {
+                    followedPlaceholder.innerHTML = followedTemplate(response);
+                  },
+                  error: function (textStatus, errorThrown) {
+                    alert(textStatus.responseText);
+                  }
+              });
+            }
+          }, false);
+
+        } // else ! error
+
+      })();
+    </script>
+  </body>
+</html>
+
