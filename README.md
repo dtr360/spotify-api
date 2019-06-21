@@ -16,8 +16,8 @@ npm install --save cors
 npm install --save cookie-parser  
 
 In order to run the webpage, open the Terminal.
-Navigate to your folder with the *app.html* file (e.g. cd cd /spotify/get-user-info)
-Run the following in the Terminal to start up the Node.js server:
+Navigate to your folder with the **app.html** file (e.g. cd cd /spotify/get-user-info)
+Run the following in the Terminal to start up the **Node.js** server:  
 node server.js
 
 You should see: Listening on 8888
