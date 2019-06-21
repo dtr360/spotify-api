@@ -136,8 +136,6 @@ app.get('/callback', function(req, res) {
   }
 });
 
-
-
 app.get('/refresh_token', function(req, res) {
   // requesting access token from refresh token
   console.log(">>>>> Entering /refresh_token function....")
