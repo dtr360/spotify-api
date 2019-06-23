@@ -8,14 +8,14 @@ You will need to install Node.js. Enter ```node -v``` in the Terminal to verify 
 
 Go to **nodejs.org**. You'll see download links.
 
-You will also need npm. Install this in the Terminal via:
+You will also need **npm**. Install this in the Terminal via:
 ```
 npm install
 ```
 
 When the installation is completed, check that your project folder now contains a subfolder called node_modules with a bunch of packages inside.
 
-You will also need to install the following:  
+You will also need to install the following via the Terminal:  
 ```
 npm install --save express  
 npm install --save request  
@@ -23,9 +23,9 @@ npm install --save cors
 npm install --save cookie-parser  
 ```
 
-In order to run the webpage, open the Terminal.
-Navigate to your folder with the **app.html** file (e.g. cd /spotify/get-user-info)
-Run the following in the Terminal to start up the **Node.js** server:  
+In order to run the webpage, you need to start the Node.js server from the Terminal.
+In ther Terminal navigate to your folder with the **app.html** file (e.g. cd /spotify/get-user-info)
+Run the following to start up the **Node.js** server:  
 ```
 node app.js
 ```
